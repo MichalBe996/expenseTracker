@@ -17,6 +17,21 @@ const app = express()
 app.use(helmet())
 
 // Limiting the number of http request per one IP in 1 hour timeframe
+const limiter = rateLimit({
+    max: 100,
+    windowMs: 60 * 60 * 100,
+    message: "Too many requests from this IP adress, please try again later"
+})
+
+app.use("/api", limiter)
+app.use(express.json())
+
+// Data sanitization againt NoSQL query injections
+app.use(mongoSanitize());
+
+// Data sanitization against XSS attacks
+
+app.use(xss())
 
 
 
