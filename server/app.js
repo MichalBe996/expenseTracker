@@ -33,6 +33,39 @@ app.use(mongoSanitize());
 
 app.use(xss())
 
+// Preventing parameter pollution
+
+app.use(hpp({
+    whitelist: ["type"]
+}))
+
+// cors middleware
+
+const corsOptions = {
+    origin: "http://localhost:3000",
+    credentials: true
+
+}
+app.use(cors(corsOptions))
+
+/// Allowing cross origin between server and client
+app.use(function (req, res, next) {	
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');    
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');    
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');   
+    res.setHeader('Access-Control-Allow-Credentials', true);    
+    next();
+  });
+
+
+
+  /// use routers here
+
+
+
+
+  ///////
+
 
 
 
