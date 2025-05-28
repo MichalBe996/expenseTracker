@@ -6,6 +6,7 @@ const xss = require("xss-clean")
 const rateLimit = require("express-rate-limit")
 const helmet = require("helmet")
 const hpp = require("hpp")
+const userRouter = require("./routes/userRoutes")
 /// import user and data routes here
 
 
@@ -60,7 +61,7 @@ app.use(function (req, res, next) {
 
 
   /// use routers here
-
+app.use("/api/v1/users", userRouter)
 
 
 
