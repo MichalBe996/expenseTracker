@@ -12,30 +12,7 @@ const signToken = id => {
 }
 
 
-const createAndSendToken = (user, statusCodeSuccess, statusCodeError, res) => {
-    const cookieOptions = {
-        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
-        httpOnly: false
-    }
-    try {
-        const token = signToken(user._id)
-        if(process.env.NODE_ENV=== "production"){
-            cookieOptions.secure = true;
-        }
-        res.cookie("jwt", token, cookieOptions)
-        user.password = undefined;
-        res.status(statusCodeSuccess).json({
-            status: "Success",
-            token,
-            data: user
-        })
-    } catch (error) {
-        res.status(statusCodeError).json({
-            status: "Fail",
-            message: error
-        })
-    }
-}
+
 
 exports.signup = async (req, res, next) => {
     const newUser = await User.create({
@@ -45,7 +22,23 @@ exports.signup = async (req, res, next) => {
         passwordConfirm: req.body.passwordConfirm,
         role: req.body.role
     })
-    createAndSendToken(newUser, 201, 400, res)
+    
+    try {
+        res.status(201).json({
+            status: "Success",
+            data: {
+                name: newUser.name,
+                email: newUser.email,
+                token: signToken(newUser._id)
+            }
+        })
+    } catch (error) {
+        res.status(400).json({
+            status: "fail",
+            message: error
+        })
+    }
+
 }
 
 exports.login = async (req, res, next) => {
@@ -68,4 +61,19 @@ exports.login = async (req, res, next) => {
     // 3) If everything is okay, send the token to user
     createAndSendToken(user, 201, 400, res)
 
+}
+
+exports.getAllData = async (req, res, next) => {
+    try {
+        const allUsers = await User.find()
+        res.status(200).json({
+            status: "Success", 
+            data: allUsers
+        })
+    } catch (error) {
+        res.status(400).json({
+            status: "Fail",
+            message: error
+        })
+    }
 }
