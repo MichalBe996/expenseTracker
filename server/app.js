@@ -28,11 +28,11 @@ app.use("/api", limiter)
 app.use(express.json())
 
 // Data sanitization againt NoSQL query injections
-app.use(mongoSanitize());
+// app.use(mongoSanitize());
 
 // Data sanitization against XSS attacks
 
-app.use(xss())
+// app.use(xss())
 
 // Preventing parameter pollution
 
